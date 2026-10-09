@@ -63,6 +63,54 @@ box-shadow:
 0 0 30px rgba(62, 199, 255, 0.25),
 0 0 60px rgba(98, 220, 255, 0.12);
 } 
+/* Ajustes de las fichas en celular */
+@media (max-width: 480px) {
+.modal {
+padding: 10px;
+}
+
+.dialog {
+max-height: calc(100vh - 20px);
+max-height: calc(100dvh - 20px);
+overflow-y: auto;
+overscroll-behavior: contain;
+}
+
+.portrait {
+min-height: 0;
+height: 32vh;
+height: min(32svh, 270px);
+}
+
+.portrait video,
+.portrait img {
+width: 100%;
+height: 100%;
+object-fit: contain;
+object-position: center;
+}
+
+.info {
+padding: 18px 16px 22px;
+}
+
+.info h2 {
+font-size: 2rem;
+margin: 8px 0 5px;
+}
+
+.role {
+margin-bottom: 14px;
+}
+
+.facts {
+gap: 9px;
+}
+
+.fact {
+padding: 10px 12px;
+}
+}
 </style></head>
 <body>
 <header>
