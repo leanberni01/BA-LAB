@@ -19,3 +19,13 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;ba
   .portrait video,.portrait img{max-height:none}
   .profile-nav{padding:6px 12px}
 }
+
+/* A quiet closing moment after the team's projects. */
+.lab-finale{position:relative;max-width:760px;margin:72px auto 56px;padding:0 18px;text-align:center}
+.lab-finale h2{font-size:clamp(1.5rem,4vw,2.2rem);line-height:1.25;margin:10px 0 26px}
+.drone-stage{max-width:500px;margin:auto;overflow:hidden;border-radius:22px;background:#06142c;box-shadow:0 20px 65px #0005,0 0 36px #3ec7ff12;border:1px solid #62dcff26}
+.drone-stage video{display:block;width:100%;height:auto;aspect-ratio:542/512;object-fit:contain}
+.drone-controls{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:18px}
+.drone-status{color:var(--muted);font-size:.85rem;line-height:1.5}
+.drone-status:empty{display:none}
+@media(max-width:480px){.lab-finale{margin:48px auto 38px;padding:0 12px}.lab-finale h2{margin-bottom:20px}.drone-stage{border-radius:18px}}

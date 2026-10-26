@@ -148,3 +148,62 @@ document.querySelector('#sound').addEventListener('click', event => {
   event.currentTarget.setAttribute('aria-pressed', String(soundEnabled));
   playSound();
 });
+
+// Load the closing film only when it is viewed or explicitly played.
+const droneVideo = document.querySelector('#droneVideo');
+const droneToggle = document.querySelector('#droneToggle');
+const droneStatus = document.querySelector('#droneStatus');
+let droneAttempted = false;
+let droneUserPaused = false;
+let droneInView = false;
+let droneFinished = false;
+let dronePending = false;
+let droneFailed = false;
+function updateDroneControl() {
+  droneToggle.textContent = dronePending ? 'Loading…' : droneFinished ? 'Watch again' : !droneVideo.paused ? 'Pause animation' : droneAttempted ? 'Play animation' : 'Play the formation';
+  droneToggle.disabled = dronePending;
+}
+async function playDrones(manual = false) {
+  if (dronePending || droneFailed) return;
+  if (!manual && (motionPreference.matches || document.hidden || !modal.hidden || droneUserPaused || droneFinished)) return;
+  droneAttempted = true;
+  dronePending = true;
+  if (manual) droneUserPaused = false;
+  if (!droneVideo.getAttribute('src')) droneVideo.src = droneVideo.dataset.src;
+  if (droneFinished) { droneVideo.currentTime = 0; droneFinished = false; }
+  updateDroneControl();
+  try {
+    await droneVideo.play();
+    if (document.hidden || !modal.hidden || (!manual && (!droneInView || motionPreference.matches))) droneVideo.pause();
+  } catch {
+    // iOS power-saving/autoplay restrictions: leave an explicit play button.
+  } finally {
+    dronePending = false;
+    updateDroneControl();
+  }
+}
+droneToggle.addEventListener('click', () => {
+  if (droneVideo.paused) playDrones(true);
+  else { droneUserPaused = true; droneVideo.pause(); }
+});
+droneVideo.addEventListener('play', updateDroneControl);
+droneVideo.addEventListener('pause', updateDroneControl);
+droneVideo.addEventListener('ended', () => { droneFinished = true; updateDroneControl(); });
+droneVideo.addEventListener('error', () => {
+  droneFailed = true;
+  dronePending = false;
+  droneVideo.removeAttribute('src');
+  droneVideo.load();
+  droneToggle.hidden = true;
+  droneStatus.textContent = 'The animation is unavailable right now. Please try reloading the page.';
+});
+if ('IntersectionObserver' in window) {
+  new IntersectionObserver(entries => {
+    droneInView = entries[0].isIntersecting && entries[0].intersectionRatio >= .35;
+    if (!droneInView) droneVideo.pause();
+    else if (!droneAttempted) playDrones();
+  }, {threshold: [0, .35]}).observe(droneVideo);
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden) droneVideo.pause(); });
+motionPreference.addEventListener('change', event => { if (event.matches) droneVideo.pause(); });
+new MutationObserver(() => { if (!modal.hidden) droneVideo.pause(); }).observe(modal, {attributes:true,attributeFilter:['hidden']});
